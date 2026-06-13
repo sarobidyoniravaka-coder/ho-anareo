@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bombe logique — Simulation & défense</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- ============ EN-TÊTE ============ -->
+  <header class="hero">
+    <div class="hero-inner">
+      <span class="pill">💣 Projet cybersécurité · démonstration pédagogique</span>
+      <h1>Simulation d'une <span class="grad">bombe logique</span></h1>
+      <p class="lead">
+        Déclenchez une attaque simulée sur un back-office de commandes,
+        observez les dégâts, détectez la menace puis restaurez le système.
+        <strong>Aucune donnée réelle n'est touchée.</strong>
+      </p>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ============ EXPLICATION ============ -->
+    <section class="card explain">
+      <h2>Qu'est-ce qu'une bombe logique&nbsp;?</h2>
+      <p>
+        Une <strong>bombe logique</strong> est un code malveillant <em>dormant</em>,
+        dissimulé dans une application légitime. Il reste inactif jusqu'à ce qu'une
+        <strong>condition</strong> soit remplie, puis exécute sa
+        <strong>charge utile</strong> (le payload) destructrice.
+      </p>
+      <div class="triggers">
+        <div class="trigger"><span>🗓️</span><b>Temporel</b><p>une date ou une heure précise.</p></div>
+        <div class="trigger"><span>🧑‍💼</span><b>Évènement</b><p>le licenciement de l'auteur du code.</p></div>
+        <div class="trigger"><span>🔌</span><b>Dead man's switch</b><p>l'absence d'un signal régulier.</p></div>
+      </div>
+      <p class="case">
+        <b>Cas réel —</b> En 1996, un administrateur d'Omega Engineering a planté une
+        bombe logique qui, après son départ, a effacé les programmes de production de
+        l'entreprise (~10&nbsp;M$ de dégâts).
+      </p>
+    </section>
+
+    <!-- ============ SIMULATION ============ -->
+    <section class="dash">
+
+      <!-- Panneau de contrôle -->
+      <aside class="card panel">
+        <h2>Console</h2>
+
+        <div class="status" id="statusBox">
+          <span class="status-dot" id="statusDot"></span>
+          <div>
+            <div class="status-label">État du système</div>
+            <div class="status-value" id="statusValue">SAIN</div>
+          </div>
+        </div>
+
+        <p class="hint">Liste des commandes (boutons d'action) :</p>
+        <button class="btn btn-danger" id="btnTrigger">💥 Déclencher la simulation</button>
+        <button class="btn btn-analyze" id="btnAnalyze">🔍 Analyser</button>
+        <button class="btn btn-restore" id="btnRestore" disabled>♻️ Restaurer</button>
+        <button class="btn btn-ghost" id="btnReset">↺ Réinitialiser</button>
+      </aside>
+
+      <!-- Données : les commandes -->
+      <div class="card data">
+        <div class="data-head">
+          <h2>Liste des commandes</h2>
+          <span class="counter" id="counter"></span>
+        </div>
+        <table class="orders">
+          <thead>
+            <tr><th>Réf.</th><th>Client</th><th>Produit</th><th>Montant</th><th>Statut</th></tr>
+          </thead>
+          <tbody id="ordersBody"><!-- rempli par JS --></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ JOURNAL ============ -->
+    <section class="card">
+      <h2>Journal des évènements</h2>
+      <div class="log" id="log"><!-- rempli par JS --></div>
+    </section>
+
+    <!-- ============ MESURES DE PROTECTION ============ -->
+    <section class="card">
+      <h2>Mesures de protection</h2>
+      <p class="muted">Comment prévenir, détecter et limiter l'impact d'une bombe logique.</p>
+      <div class="grid-protect">
+        <div class="protect"><h3>🔎 Revue de code &amp; SAST</h3><p>Relecture obligatoire et analyse statique pour repérer un code dormant avant la mise en production.</p></div>
+        <div class="protect"><h3>🔐 Moindre privilège</h3><p>Chaque service n'a que les droits strictement nécessaires : le payload ne peut pas tout détruire.</p></div>
+        <div class="protect"><h3>📡 Surveillance EDR/SIEM</h3><p>Détection comportementale des actions anormales (corruption massive de données) en temps réel.</p></div>
+        <div class="protect"><h3>💾 Sauvegardes 3-2-1</h3><p>Sauvegardes régulières, testées et hors-ligne : la restauration annule l'attaque.</p></div>
+        <div class="protect"><h3>🚪 Offboarding</h3><p>Révocation immédiate des accès au départ d'un employé pour neutraliser un dead man's switch.</p></div>
+        <div class="protect"><h3>🧾 Traçabilité (Git)</h3><p>Historique de version signé : on retrouve qui a introduit quelle ligne, et quand.</p></div>
+      </div>
+    </section>
+
+    <p class="disclaimer">
+      ⚠️ Démonstration pédagogique. Toutes les commandes, comptes et journaux sont
+      simulés en mémoire côté serveur : aucune action n'est effectuée sur un système réel.
+    </p>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

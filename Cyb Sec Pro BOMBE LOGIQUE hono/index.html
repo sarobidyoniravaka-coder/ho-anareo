@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulation : Bombe logique &amp; moyens de protection</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>💣 Simulation d'attaque par bombe logique</h1>
+    <p class="subtitle">
+      Démonstration pédagogique du fonctionnement d'une bombe logique
+      et des mesures permettant de s'en protéger.
+    </p>
+  </header>
+
+  <main>
+    <!-- 1. Explications -->
+    <section id="explications" class="card">
+      <h2>1. Qu'est-ce qu'une bombe logique ?</h2>
+      <p>
+        Une <strong>bombe logique</strong> est un fragment de code malveillant inséré
+        dans un programme ou un système légitime. Contrairement à un virus, elle ne se
+        propage pas : elle reste <strong>dormante</strong> et invisible jusqu'à ce
+        qu'une <strong>condition de déclenchement</strong> précise soit remplie. Une
+        fois déclenchée, elle exécute sa <strong>charge utile (payload)</strong>,
+        souvent destructrice.
+      </p>
+
+      <h3>Déclencheurs courants</h3>
+      <ul>
+        <li>🕒 <strong>Temporel</strong> : une date ou une heure précise (« bombe à retardement »).</li>
+        <li>👤 <strong>Événementiel</strong> : la suppression d'un compte, le départ d'un employé, une modification dans une base de données.</li>
+        <li>📡 <strong>Absence de signal</strong> : un « interrupteur de l'homme mort » (dead man's switch) qui s'active si une personne ne se connecte plus pour « réarmer » le système.</li>
+      </ul>
+
+      <h3>Pourquoi c'est dangereux ?</h3>
+      <p>
+        Le code reste invisible parmi des milliers de lignes légitimes. Il est souvent
+        introduit par une personne ayant un accès interne (menace interne) ou via une
+        dépendance / mise à jour compromise (attaque de la chaîne d'approvisionnement).
+        Les dégâts peuvent être très étendus : suppression de fichiers, corruption de
+        bases de données, désactivation de comptes administrateurs, etc.
+      </p>
+
+      <div class="callout">
+        <strong>📚 Cas réel connu :</strong> en 1996, un administrateur système
+        licencié d'une entreprise américaine (Omega Engineering) avait laissé un
+        programme malveillant programmé pour s'activer quelques semaines après son
+        départ, supprimant la quasi-totalité des fichiers de conception de
+        l'entreprise. Ce cas est souvent cité comme l'un des premiers procès liés à
+        une bombe logique.
+      </div>
+    </section>
+
+    <!-- 2. Simulation -->
+    <section id="simulation" class="card">
+      <h2>2. Simulation interactive</h2>
+      <p>
+        <strong>Scénario :</strong> un script de maintenance nocturne contient une
+        bombe logique. Elle se déclenche si l'employé <code>jdupont</code> est
+        licencié <em>ou</em> si la date système atteint le
+        <strong id="dateLimiteAffiche"></strong>.
+      </p>
+      <p>
+        Avant de lancer le script, activez une ou plusieurs mesures de protection
+        ci-dessous pour observer leur effet sur le déroulement de l'attaque.
+      </p>
+
+      <div class="simulation-grid">
+        <div class="panel">
+          <h3>🛡️ Mesures de protection</h3>
+          <label class="toggle">
+            <input type="checkbox" id="defCodeReview" />
+            <span>Revue de code / analyse statique avant déploiement</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="defLeastPriv" />
+            <span>Principe du moindre privilège</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="defMonitoring" />
+            <span>Surveillance comportementale (EDR / SIEM)</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="defBackups" />
+            <span>Sauvegardes régulières et testées</span>
+          </label>
+        </div>
+
+        <div class="panel">
+          <h3>🖥️ Serveur de production</h3>
+          <ul id="fileList" class="file-list"></ul>
+          <p class="status-line">📅 Date système : <span id="currentDate" class="badge"></span></p>
+          <p class="status-line">👤 Compte <code>jdupont</code> : <span id="employeeStatus" class="badge"></span></p>
+        </div>
+
+        <div class="panel code-panel">
+          <h3>🧨 Extrait du script de maintenance</h3>
+          <pre><code>function verificationQuotidienne() {
+  const employe = annuaireRH.getStatut("jdupont");
+  const dateSysteme = new Date();
+
+  <span class="highlight">if (employe.statut === "licencié"
+      || dateSysteme >= new Date("2026-06-20")) {
+    supprimerRecursivement("/serveur/production");
+    revoquerComptesAdmin();
+    envoyerAlerte("Systèmes hors service.");
+  }</span>
+}</code></pre>
+        </div>
+
+        <div class="panel">
+          <h3>🎛️ Actions</h3>
+          <div class="actions">
+            <button id="btnAdvanceDate">⏩ Avancer le temps (+1 jour)</button>
+            <button id="btnFireEmployee">🔥 Licencier l'employé jdupont</button>
+            <button id="btnRun" class="primary">▶️ Exécuter le script planifié</button>
+            <button id="btnRestore" disabled>💾 Restaurer depuis la sauvegarde</button>
+            <button id="btnReset" class="ghost">🔄 Réinitialiser</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel log-panel">
+        <h3>📜 Journal d'exécution</h3>
+        <div id="log" class="log"></div>
+      </div>
+    </section>
+
+    <!-- 3. Solutions -->
+    <section id="solutions" class="card">
+      <h2>3. Solutions et bonnes pratiques</h2>
+      <p>
+        Aucune mesure n'est infaillible seule : c'est leur combinaison
+        (<strong>défense en profondeur</strong>) qui permet de prévenir, détecter et
+        limiter l'impact d'une bombe logique.
+      </p>
+
+      <div class="solutions-grid">
+        <div class="solution">
+          <h4>🔍 Revue de code &amp; analyse statique (SAST)</h4>
+          <p>Faire relire chaque modification par un autre développeur (« four eyes »)
+            et utiliser des outils d'analyse statique pour repérer du code suspect
+            avant la mise en production.</p>
+        </div>
+        <div class="solution">
+          <h4>🔐 Principe du moindre privilège</h4>
+          <p>Limiter les droits de chaque compte (humain ou de service) au strict
+            nécessaire, afin que même un code malveillant ne puisse pas tout
+            détruire.</p>
+        </div>
+        <div class="solution">
+          <h4>👀 Surveillance &amp; détection (EDR / SIEM)</h4>
+          <p>Mettre en place des alertes sur les comportements anormaux : suppression
+            massive de fichiers, modification de scripts planifiés, créations de
+            tâches cron inhabituelles.</p>
+        </div>
+        <div class="solution">
+          <h4>🚪 Gestion du départ des employés</h4>
+          <p>Désactiver immédiatement tous les accès lors d'un départ ou d'un
+            licenciement, et auditer le code écrit récemment par la personne
+            concernée.</p>
+        </div>
+        <div class="solution">
+          <h4>💾 Sauvegardes régulières et testées</h4>
+          <p>Appliquer la règle 3-2-1 (3 copies, 2 supports différents, 1 hors site)
+            et tester régulièrement la restauration pour garantir qu'elle
+            fonctionne.</p>
+        </div>
+        <div class="solution">
+          <h4>🧾 Traçabilité &amp; gestion de version</h4>
+          <p>Utiliser un système de contrôle de version avec historique complet et
+            commits signés, pour savoir qui a écrit quoi et pouvoir auditer le
+            code facilement.</p>
+        </div>
+        <div class="solution">
+          <h4>🧪 Audits et tests de sécurité réguliers</h4>
+          <p>Réaliser des audits de code et des tests d'intrusion périodiques pour
+            détecter du code dormant ou des portes dérobées avant qu'elles ne soient
+            exploitées.</p>
+        </div>
+        <div class="solution">
+          <h4>✅ Validation obligatoire avant déploiement</h4>
+          <p>Exiger une approbation (« pull request » validée) et des tests
+            automatisés avant que tout changement n'atteigne la production.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card disclaimer">
+      ⚠️ Cette page est une <strong>démonstration pédagogique</strong>. Tous les
+      fichiers, comptes et journaux affichés sont simulés en mémoire dans le
+      navigateur : aucune action réelle n'est effectuée sur un système.
+    </section>
+  </main>
+
+  <footer>
+    <p>Projet pédagogique — Cybersécurité : bombes logiques et défense en profondeur</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
